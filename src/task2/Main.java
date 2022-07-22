@@ -11,7 +11,7 @@ import java.util.*;
  */
 
 public class Main {
-    static final int NUMBER = 20;
+    static final long NUMBER = 10_000_000;
 
     public static void main(String[] args) {
         List<String> names = Arrays.asList("Иван", "Алексей", "Наталья", "Анна", "Олег", "Максим", "Денис", "Василий");
@@ -24,34 +24,38 @@ public class Main {
                     families.get(new Random().nextInt(families.size())),
                     new Random().nextInt(100),
                     Sex.values()[new Random().nextInt(Sex.values().length)],
-                    Education.values()[new Random().nextInt(Sex.values().length)]
+                    Education.values()[new Random().nextInt(Education.values().length)]
             ));
         }
 
-        for (Person person : persons) {
-            System.out.println(person);
-        }
-
-        //1
         long count = persons.stream()
                 .filter(x -> x.getAge() < 18)
                 .count();
         System.out.println("Количество несовершеннолетних: " + count);
 
-        //2
         List<String> listFamilies = persons.stream()
                 .filter(x -> x.getSex() == Sex.MAN)
                 .filter(x -> x.getAge() >= 18 && x.getAge() < 27)
                 .map(Person::getFamily).toList();
         System.out.println("Список призывников: \n" + listFamilies);
 
-        //3
-        List<String> listEducation = persons.stream()
-                .filter(x -> x.getSex() == Sex.MAN) //todo проработать условия возраста и образования
-                .map(Person::getFamily)
-                .sorted(Comparator.naturalOrder()) //todo проработать компаратор на сортировку
+        List<Person> listEducation = persons.stream()
+                .filter(x -> {
+                    if (x.getSex() == Sex.MAN) {
+                        return x.getAge() < 65 && x.getAge() >= 18;
+                    } else return x.getAge() < 60 && x.getAge() > 18;
+                })
+                .filter(x -> x.getEducation() == Education.HIGHER)
+                .sorted(Comparator.comparing(Person::getFamily)
+                        .thenComparing(Person::getName)
+                        .thenComparing(Person::getAge))
                 .toList();
-        System.out.println("Cписок потенциально работоспособных людей с высшим образованием: \n" + listEducation);
+
+        System.out.println("Cписок потенциально работоспособных людей с высшим образованием: ");
+        for (Person person : listEducation) {
+            System.out.println(person);
+        }
+
 
     }
 }
