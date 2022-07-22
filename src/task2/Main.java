@@ -49,8 +49,9 @@ public class Main {
         List<String> listEducation = persons.stream()
                 .filter(x -> x.getSex() == Sex.MAN) //todo проработать условия возраста и образования
                 .map(Person::getFamily)
+                .sorted(Comparator.naturalOrder()) //todo проработать компаратор на сортировку
                 .toList();
-
+        System.out.println("Cписок потенциально работоспособных людей с высшим образованием: \n" + listEducation);
 
     }
 }
