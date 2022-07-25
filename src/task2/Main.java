@@ -2,6 +2,8 @@ package task2;
 
 import java.util.*;
 
+import static java.util.Arrays.asList;
+
 /**
  * Из коллеции объектов `Person` необходимо:
  * 1. Найти количество несовершеннолетних (т.е. людей младше 18 лет).
@@ -14,19 +16,28 @@ public class Main {
     static final long NUMBER = 10_000_000;
 
     public static void main(String[] args) {
-        List<String> names = Arrays.asList("Иван", "Алексей", "Наталья", "Анна", "Олег", "Максим", "Денис", "Василий");
-        List<String> families = Arrays.asList("Evans", "Young", "Harris", "Wilson", "Davies", "Adamson", "Brown");
+        List<String> namesBoys = Arrays.asList("Иван", "Алексей", "Олег", "Максим", "Денис", "Василий");
+        List<String> namesGirls = Arrays.asList("Наталья", "Анна", "Мария", "Олеся", "Виктория", "Анастасия");
+        List<String> names = new ArrayList<>();
+        names.addAll(namesBoys);
+        names.addAll(namesGirls);
+        List<String> families = asList("Evans", "Young", "Harris", "Wilson", "Davies", "Adamson", "Brown");
 
         Collection<Person> persons = new ArrayList<>();
         for (int i = 0; i < NUMBER; i++) {
+            String name = names.get(new Random().nextInt(names.size()));
             persons.add(new Person(
-                    names.get(new Random().nextInt(names.size())),
+                    name,
                     families.get(new Random().nextInt(families.size())),
                     new Random().nextInt(100),
-                    Sex.values()[new Random().nextInt(Sex.values().length)],
+                    nameSexMan(namesBoys, name),
                     Education.values()[new Random().nextInt(Education.values().length)]
             ));
         }
+
+//        for (Person person : persons) {
+//            System.out.println(person);
+//        }
 
         long count = persons.stream()
                 .filter(x -> x.getAge() < 18)
@@ -51,12 +62,21 @@ public class Main {
                         .thenComparing(Person::getAge))
                 .toList();
 
-        System.out.println("Cписок потенциально работоспособных людей с высшим образованием: ");
+        System.out.println("Список потенциально работоспособных людей с высшим образованием: ");
         for (Person person : listEducation) {
             System.out.println(person);
         }
+    }
 
-
+    public static Sex nameSexMan(List<String> names, String name) {
+        for (String s : names) {
+            if (s.equals(name))
+                return Sex.MAN;
+        }
+        return Sex.WOMAN;
     }
 }
+
+
+
 
